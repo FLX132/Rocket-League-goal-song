@@ -29,22 +29,15 @@ client.on('ready', () => {
 });
 
 client.on('messageCreate', (message) => {
-  let sendingUser = message.author.id;
-  if(!idStruct.get(sendingUser)) {
-    console.log("Who said that?");
-  } else if(message.content.startsWith("/")) {
-    let subContent = message.content.substring(1, message.content.length);
-    console.log(commandConstruct);
-    let channelID = idStruct.get(sendingUser);
-    let channelName = client.channels.cache.get(channelID);
-    switch(commandConstruct.get(subContent)) {
-      case 0: joinChannel(channelID); break;
-      case 1: leaveChannel(); break;
-      case 2: startBanter(); break;
-      default: console.log("Unknown command"); break;
-    }
+  let id = message.id;
+  let webHook = message.webhookId;
+
+  if(webHook) {
+    return 0;
   }
-  console.log(sendingUser);
+
+
+  console.log(id + " " + webHook);
 });
 
 client.on("voiceStateUpdate", (oldState, newState) => {
