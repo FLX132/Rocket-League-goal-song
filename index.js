@@ -28,16 +28,12 @@ client.on('ready', () => {
     console.log('The bot is ready');
 });
 
-client.on('messageCreate', (message) => {
-  let id = message.id;
+client.on('messageUpdate', (message) => {
   let webHook = message.webhookId;
-
-  if(webHook) {
+  if(!webHook) {
     return 0;
   }
-
-
-  console.log(id + " " + webHook);
+  console.log(webHook);
 });
 
 client.on("voiceStateUpdate", (oldState, newState) => {

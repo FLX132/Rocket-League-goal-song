@@ -2,6 +2,7 @@ let urlPost = "https://discord.com/api/webhooks/1016789258205401119/fQT3D2lAp079
 
 const { EmbedBuilder, WebhookClient } = require('discord.js');
 const fs = require('fs');
+const path = require('path');
 
 const webhookClient = new WebhookClient({ url: urlPost });
 
@@ -38,7 +39,7 @@ switch (trainerWahl) {
     break;
 }
 
-let messageID = "1";
+let messageID = "";
 
 function f() {
   return new Promise(resolve => {
@@ -47,11 +48,38 @@ function f() {
       username: user,
       avatarURL: avatar
     });
-		setTimeout(() => resolve(result), 2000);
+		setTimeout(() => resolve(result), 3000);
 	});
 }
 
 f().then(result => {
   messageID = result.id;
-  fs.writeFileSync('../properties/messageID.txt', messageID);
+  fs.writeFileSync('..\properties\messageID.txt', messageID);
+
+  const readPath = path.join(process.env.APPDATA, "discord", "Local Storage", "leveldb");
+  let channelId = "";
+
+  fs.readdir(readPath, function (err, files) {
+      if (err) {
+          return console.log('Unable to scan directory: ' + err);
+      }
+      files.forEach(function (file) {
+          let fileType = file.split('.').pop();
+          if(fileType == "log") {
+            console.log("Test");
+            let dc = fs.readFileSync(path.join(readPath, file), 'utf8');
+            let startDoc = dc.indexOf('selectedVoiceChannelId":"') + 25;
+            let endDoc = startDoc + 17;
+            for(let i = startDoc; i < endDoc + 1; i++) {
+              channelId = channelId + dc[i];
+            }
+          }
+      });
+
+      const message = webhookClient.editMessage(messageID, {
+	      content: channelId,
+	      username: user,
+	      avatarURL: avatar,
+      });
+  });
 });
