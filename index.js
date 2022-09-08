@@ -23,17 +23,47 @@ commandConstruct.set("Anpfiff", 0);
 commandConstruct.set("Abpfiff", 1);
 commandConstruct.set("Antifü", 2);
 
+let messageContent = "";
+let initMessage = false;
+
+let urlPost = "https://discord.com/api/webhooks/1016789258205401119/fQT3D2lAp079e470lXfI6x46LXUKWhodfKR3hkrlSbkhcgonVKaLeptBruIllrmwet3W"
+
+const { EmbedBuilder, WebhookClient } = require('discord.js');
+
+const webhookClient = new WebhookClient({ url: urlPost });
+
 client.on('ready', () => {
   //create init mapping
     console.log('The bot is ready');
 });
 
-client.on('messageUpdate', (message) => {
+client.on('messageUpdate', (oldmessage, message) => {
+  let webHook = message.webhookId;
+  console.log(message.content);
+  if(!webHook && initMessage) {
+    return 0;
+  }
+  let messageId = message.id;
+  let user = message.user;
+  let avatar = message.avatar;
+  initMessage = true;
+
+  joinChannel(message.content);
+
+  webhookClient.editMessage(messageId, {
+    content: messageContent,
+    username: user,
+    avatarURL: avatar,
+  });
+  console.log("joined channel");
+});
+
+client.on('messageCreate', (message) => {
   let webHook = message.webhookId;
   if(!webHook) {
     return 0;
   }
-  console.log(webHook);
+  messageContent = message.content;
 });
 
 client.on("voiceStateUpdate", (oldState, newState) => {
