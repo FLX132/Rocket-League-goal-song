@@ -67,9 +67,11 @@ client.on('messageUpdate', (oldmessage, message) => {
     console.log(message.embeds[0].data.title);
     if(message.embeds[0].data.title == "Tooooooor für den FCN!!!") {
       startGoal();
-    } else if(message.embeds.title == "ALIAS") {}
-  } else if(!initMessage && message.embeds != "") {
-    console.log("Audioplayer only available when connected to voice channel");
+    } else if(message.embeds[0].data.title == "Anpfiff!") {
+      player.stop();
+    }
+  } else if(initMessage && message.embeds == "") {
+    leaveChannel();
   }
 });
 
@@ -140,5 +142,4 @@ function startGoal() {
     player.play(resourceTor);
     return 0;
   }
-  console.log("Rocket League is active but no connection was established");
 }
