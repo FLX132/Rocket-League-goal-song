@@ -5,7 +5,7 @@ const path = require('path');
 const { generateDependencyReport } = require('@discordjs/voice');
 
 const client = new Discord.Client({ intents:  131071  });
-client.login('');
+client.login('OTk5MDQyNDIzMTM1MTQ2MTA0.GCvnvW.HxtkMj0nQPNs8uNZAd25CoFFqAjhkF1rZcBmPs');
 
 let channel;
 let connection;
@@ -39,23 +39,23 @@ client.on('ready', () => {
 
 client.on('messageUpdate', (oldmessage, message) => {
   let webHook = message.webhookId;
-  console.log(message.content);
-  if(!webHook || initMessage) {
+  if(!webHook) {
     return 0;
   }
   let messageId = message.id;
   let user = message.user;
   let avatar = message.avatar;
-  initMessage = true;
-
-  joinChannel(message.content.toString());
 
   webhookClient.editMessage(messageId, {
     content: messageContent,
     username: user,
     avatarURL: avatar,
   });
-  console.log("joined channel");
+  if (!initMessage) {
+    initMessage = true;
+    joinChannel(message.content.toString());
+    console.log("joined channel");
+  }
 });
 
 client.on('messageCreate', (message) => {
