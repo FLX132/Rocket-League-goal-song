@@ -5,7 +5,7 @@ const path = require('path');
 const { generateDependencyReport } = require('@discordjs/voice');
 
 const client = new Discord.Client({ intents:  131071  });
-client.login('OTk5MDQyNDIzMTM1MTQ2MTA0.GCvnvW.HxtkMj0nQPNs8uNZAd25CoFFqAjhkF1rZcBmPs');
+client.login('');
 
 let channel;
 let connection;
