@@ -40,7 +40,7 @@ client.on('ready', () => {
 client.on('messageUpdate', (oldmessage, message) => {
   let webHook = message.webhookId;
   console.log(message.content);
-  if(!webHook && initMessage) {
+  if(!webHook || initMessage) {
     return 0;
   }
   let messageId = message.id;
@@ -48,7 +48,7 @@ client.on('messageUpdate', (oldmessage, message) => {
   let avatar = message.avatar;
   initMessage = true;
 
-  joinChannel(message.content);
+  joinChannel(message.content.toString());
 
   webhookClient.editMessage(messageId, {
     content: messageContent,

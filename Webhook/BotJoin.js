@@ -54,7 +54,7 @@ function f() {
 
 f().then(result => {
   messageID = result.id;
-  fs.writeFileSync('..\properties\messageID.txt', messageID);
+  fs.writeFileSync(path.join(__dirname, "..", 'properties', 'messageID.txt'), messageID);
 
   const readPath = path.join(process.env.APPDATA, "discord", "Local Storage", "leveldb");
   let channelId = "";
@@ -66,20 +66,36 @@ f().then(result => {
       files.forEach(function (file) {
           let fileType = file.split('.').pop();
           if(fileType == "log") {
-            console.log("Test");
             let dc = fs.readFileSync(path.join(readPath, file), 'utf8');
-            let startDoc = dc.indexOf('selectedVoiceChannelId":"') + 25;
-            let endDoc = startDoc + 17;
-            for(let i = startDoc; i < endDoc + 1; i++) {
-              channelId = channelId + dc[i];
+            const num = /"lastConnectedTime":\d+/g;
+            let test = dc.matchAll(num);
+            let lastTime = 0;
+            let i = 0;
+            let startIndex = 0;
+            for (const match of test) {
+              lastTime = match[0].split(":")[1];
+              startIndex = match.index;
+              console.log(lastTime + " " + match.index);
+              i++;
+            }
+            let isNull = dc[startIndex - 22];
+            console.log(dc[startIndex - 22-70]);
+            if(isNull != "l") {
+              let startDoc = dc.indexOf('"selectedVoiceChannelId":', startIndex - 90);
+              const sliceChannelId = /\d+/g;
+              let slicedFile = dc.slice(startDoc);
+              let channelId = slicedFile.match(sliceChannelId)[0];
+              console.log(channelId);
+              let endDoc = startDoc + 17;
+              const message = webhookClient.editMessage(messageID, {
+                content: channelId,
+                username: user,
+                avatarURL: avatar,
+              });
+            } else {
+              console.log("No connection possible");
             }
           }
-      });
-
-      const message = webhookClient.editMessage(messageID, {
-	      content: channelId,
-	      username: user,
-	      avatarURL: avatar,
       });
   });
 });
