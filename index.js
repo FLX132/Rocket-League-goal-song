@@ -1,5 +1,5 @@
 const Discord = require('discord.js');
-const { joinVoiceChannel, createAudioResource, StreamType, createAudioPlayer, AudioPlayerStatus } = require('@discordjs/voice');
+const { joinVoiceChannel, createAudioResource, StreamType, createAudioPlayer, AudioPlayerStatus, DiscordStream } = require('@discordjs/voice');
 const { join } = require('node:path');
 const path = require('path');
 const { generateDependencyReport } = require('@discordjs/voice');
@@ -25,6 +25,7 @@ commandConstruct.set("Antifü", 2);
 
 let messageContent = "";
 let initMessage = false;
+let audioPlay = false;
 
 let urlPost = "https://discord.com/api/webhooks/1016789258205401119/fQT3D2lAp079e470lXfI6x46LXUKWhodfKR3hkrlSbkhcgonVKaLeptBruIllrmwet3W"
 
@@ -39,22 +40,36 @@ client.on('ready', () => {
 
 client.on('messageUpdate', (oldmessage, message) => {
   let webHook = message.webhookId;
+  console.log(webHook == message.author.id);
   if(!webHook) {
     return 0;
   }
+
   let messageId = message.id;
   let user = message.user;
   let avatar = message.avatar;
 
-  webhookClient.editMessage(messageId, {
-    content: messageContent,
-    username: user,
-    avatarURL: avatar,
-  });
-  if (!initMessage) {
+  console.log(!initMessage)
+  console.log(message.embeds != "")
+
+  if (!initMessage && message.embeds == "") {
     initMessage = true;
+    webhookClient.editMessage(messageId, {
+      content: messageContent,
+      username: user,
+      avatarURL: avatar,
+      embeds: message.embeds,
+    });
     joinChannel(message.content.toString());
     console.log("joined channel");
+  } else if(initMessage && message.embeds != "") {
+    console.log("startAudio");
+    console.log(message.embeds[0].data.title);
+    if(message.embeds[0].data.title == "Tooooooor für den FCN!!!") {
+      startGoal();
+    } else if(message.embeds.title == "ALIAS") {}
+  } else if(!initMessage && message.embeds != "") {
+    console.log("Audioplayer only available when connected to voice channel");
   }
 });
 
@@ -120,6 +135,8 @@ function startBanter() {
 
 function startGoal() {
   if(connection) {
+    player.stop();
+    resourceTor = createAudioResource(path.join(__dirname, './audio/FCN-Torhymne.mp3'), { inlineVolume: true });
     player.play(resourceTor);
     return 0;
   }
