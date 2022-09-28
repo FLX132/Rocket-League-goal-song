@@ -4,17 +4,17 @@ SendMode Input  ; Recommended for new scripts due to its superior speed and reli
 SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 
 Numpad5::
-Run node Webhook/StartMusic.js
+Run node Webhook/StartMusic.js, , Min
 return
 
 Numpad7::
-Run node Webhook/StopMusic.js
+Run node Webhook/StopMusic.js, ,Min
 return
 
 Numpad8::
-Run node Webhook/BotJoin.js
+Run node Webhook/BotJoin.js, , Min
 return
 
 Numpad9::
-Run node Webhook/Botleave.js
+Run node Webhook/Botleave.js, , Min
 return

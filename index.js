@@ -26,6 +26,7 @@ commandConstruct.set("Antifü", 2);
 let messageContent = "";
 let initMessage = false;
 let audioPlay = false;
+let runs = 0;
 
 let urlPost = "https://discord.com/api/webhooks/1016789258205401119/fQT3D2lAp079e470lXfI6x46LXUKWhodfKR3hkrlSbkhcgonVKaLeptBruIllrmwet3W"
 
@@ -40,18 +41,15 @@ client.on('ready', () => {
 
 client.on('messageUpdate', (oldmessage, message) => {
   let webHook = message.webhookId;
-  console.log(webHook == message.author.id);
   if(!webHook) {
     return 0;
   }
 
+  runs++;
   let messageId = message.id;
   let user = message.user;
   let avatar = message.avatar;
-
-  console.log(!initMessage)
-  console.log(message.embeds != "")
-
+  console.log(initMessage);
   if (!initMessage && message.embeds == "") {
     initMessage = true;
     webhookClient.editMessage(messageId, {
@@ -60,6 +58,7 @@ client.on('messageUpdate', (oldmessage, message) => {
       avatarURL: avatar,
       embeds: message.embeds,
     });
+    console.log(message.content.toString())
     joinChannel(message.content.toString());
     console.log("joined channel");
   } else if(initMessage && message.embeds != "") {
@@ -70,8 +69,10 @@ client.on('messageUpdate', (oldmessage, message) => {
     } else if(message.embeds[0].data.title == "Anpfiff!") {
       player.stop();
     }
-  } else if(initMessage && message.embeds == "") {
+  } else if(initMessage && message.embeds == "" && runs > 2) {
     leaveChannel();
+    initMessage = true;
+    webhookClient.deleteMessage(messageId);
   }
 });
 
@@ -110,6 +111,7 @@ player.on(AudioPlayerStatus.AutoPause, () => {
 function joinChannel(id) {
   console.log("Int joinChannel");
   let channel = client.channels.cache.get(id);
+  console.log(id);
   connection = joinVoiceChannel({
     channelId: id,
     guildId: channel.guild.id,
